@@ -1,9 +1,12 @@
 <script lang="ts">
 	import StudentCard from '$lib/components/StudentCard.svelte';
-	import Error from '$lib/components/Error.svelte';
+	import ErrorMessage from '$lib/components/Error.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { onMount } from 'svelte';
+	import { debounce } from '$lib/utils/utils';
+	import { filterAndSort, calculateAge } from '$lib/students';
 	import type { StudentDataItem, Student } from '$lib/data';
+	import { SORT_OPTIONS, type SortOption } from '$lib/constants';
 	import favicon from '$lib/assets/favicon.svg';
 	import '../app.css';
 
@@ -14,44 +17,22 @@
 	let loading = $state<boolean>(true);
 
 	let showActiveOnly = $state<boolean>(false);
-	let sortBy = $state<'name' | 'averageScore' | ''>('');
+	let sortBy = $state<SortOption>(SORT_OPTIONS.DEFAULT);
 	let searchQuery = $state<string>('');
 
-	let displayedStudents = $derived<() => Student[]>(() => {
-		let result = showActiveOnly
-			? students.filter((student) => student.activeLabel === 'Yes')
-			: [...students];
+	let displayedStudents = $derived<() => Student[]>(() =>
+		filterAndSort(students, showActiveOnly, searchQuery, sortBy)
+	);
 
-		if (searchQuery.trim()) {
-			result = result.filter((student) =>
-				student.name.toLowerCase().includes(searchQuery.toLowerCase())
-			);
-		}
-
-		if (sortBy === 'name') {
-			result.sort((a, b) => a.name.localeCompare(b.name));
-		} else if (sortBy === 'averageScore') {
-			result.sort((a, b) => b.averageScore - a.averageScore);
-		}
-
-		return result;
-	});
-
-	function calculateAge(birthdate: string): number {
-		const today = new Date();
-		const birth = new Date(birthdate);
-		let age = today.getFullYear() - birth.getFullYear();
-		const hasHadBirthdayThisYear =
-			today.getMonth() > birth.getMonth() ||
-			(today.getMonth() === birth.getMonth() && today.getDate() >= birth.getDate());
-		if (!hasHadBirthdayThisYear) age--;
-		return age;
-	}
+	const handleSearch = debounce((value) => {
+		searchQuery = value;
+	}, 1000);
 
 	onMount(async () => {
 		// TODO: fetch from /api/students, parse the response as StudentDataItem[], transform into students
 		try {
 			const response = await fetch('/api/students');
+			if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
 			const data: StudentDataItem[] = await response.json();
 			console.log(data);
 
@@ -86,10 +67,14 @@
 	{#if loading}
 		<Spinner />
 	{:else if error}
-		<Error message={error} />
+		<ErrorMessage message={error} />
 	{:else}
 		<div class="controls">
-			<input type="text" placeholder="Search by name..." bind:value={searchQuery} />
+			<input
+				type="text"
+				placeholder="Search by name..."
+				oninput={(e) => handleSearch((e.target as HTMLInputElement).value)}
+			/>
 			<button
 				class="toggle"
 				class:active={showActiveOnly}
@@ -100,15 +85,17 @@
 			<div class="sort-control">
 				<label for="order">Sort By:</label>
 				<select id="order" onchange={(e) => (sortBy = e.currentTarget.value as typeof sortBy)}>
-					<option value="">Default</option>
-					<option value="name">Name</option>
-					<option value="averageScore">Average Score</option>
+					<option value={SORT_OPTIONS.DEFAULT}>Default</option>
+					<option value={SORT_OPTIONS.NAME}>Name</option>
+					<option value={SORT_OPTIONS.AVERAGE_SCORE}>Average Score</option>
 				</select>
 			</div>
 		</div>
 		<section class="grid">
 			{#each displayedStudents() as student (student.id)}
 				<StudentCard {student} />
+			{:else}
+				<p class="empty">No students found</p>
 			{/each}
 		</section>
 	{/if}
@@ -125,6 +112,7 @@
 	h1 {
 		font-size: var(--font-size-heading);
 		font-weight: var(--font-weight-md);
+		font-family: var(--font-family-heading);
 		margin-bottom: var(--spacing-lg);
 		color: var(--color-text);
 	}
@@ -195,6 +183,12 @@
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		gap: 30px;
+	}
+
+	.empty {
+		color: var(--color-text-muted);
+		font-size: var(--font-size-base);
+		/* grid-column: 1 / -1; */
 	}
 
 	@media (max-width: 768px) {

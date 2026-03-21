@@ -26,12 +26,12 @@
 	--radius-card: 8px;
 
 	/* typography */
+	--font-family-body: Verdana, Geneva, sans-serif;
+	--font-family-heading: Tahoma, Geneva, sans-serif;
 	--font-size-sm: 0.875rem;
 	--font-size-base: 20px;
 	--font-size-lg: 24px;
 	--font-size-heading: 32px;
-
-	/* typography */
 	--font-weight-sm: 400;
 	--font-weight-md: 700;
 }
@@ -51,7 +51,7 @@ html {
 body {
 	margin: 0;
 	padding: 0;
-	font-family: Verdana, Geneva, sans-serif;
+	font-family: var(--font-family-body);
 	line-height: 100%;
 	letter-spacing: -0.04em;
 	-webkit-font-smoothing: antialiased;

@@ -19,10 +19,7 @@
 - Sort — dropdown to sort by name or average score
 - Search — text input to filter by student name
 
-## What I Would Do Differently in Production or Improve
+## What I Would Improve
 
 - Extract a `.container` component for layout max-width/centering — scales better when full-width sections like headers or banners need to break out of the max-width constraint
-- Add proper HTTP error handling (check `response.ok` before parsing JSON)
-- Add debounce to the search input to avoid filtering on every keystroke
-- Empty state — show a user-facing message when search or filter returns no results, rather than rendering an empty grid
-- Add test coverage — unit tests for the data transformation logic (especially `calculateAge` and the `averageScore` calculation) and component tests for conditional rendering (e.g. `danger` class applied correctly for `No` values)
+- Extract reusable UI components — `Button`, `Input`, and `Select` are used as inline elements in the page but in a production codebase these would be extracted into shared components.

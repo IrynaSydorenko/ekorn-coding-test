@@ -3,14 +3,12 @@
 	import ErrorMessage from '$lib/components/Error.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { onMount } from 'svelte';
-	import { debounce } from '$lib/utils/utils';
-	import { filterAndSort, calculateAge } from '$lib/students';
+	import { debounce, filterAndSort, calculateAge } from '$lib/utils/utils';
 	import type { StudentDataItem, Student } from '$lib/data';
 	import { SORT_OPTIONS, type SortOption } from '$lib/constants';
 	import favicon from '$lib/assets/favicon.svg';
 	import '../app.css';
 
-	// Fetch from GET /api/students, transform the response into the Student type, and assign to students
 	let students = $state<Student[]>([]);
 
 	let error = $state<string | null>();
@@ -29,7 +27,6 @@
 	}, 1000);
 
 	onMount(async () => {
-		// TODO: fetch from /api/students, parse the response as StudentDataItem[], transform into students
 		try {
 			const response = await fetch('/api/students');
 			if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
@@ -111,7 +108,7 @@
 
 	h1 {
 		font-size: var(--font-size-heading);
-		font-weight: var(--font-weight-md);
+		font-weight: var(--font-weight-700);
 		font-family: var(--font-family-heading);
 		margin-bottom: var(--spacing-lg);
 		color: var(--color-text);

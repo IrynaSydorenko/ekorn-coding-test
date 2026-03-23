@@ -18,7 +18,7 @@
 	let sortBy = $state<SortOption>(SORT_OPTIONS.DEFAULT);
 	let searchQuery = $state<string>('');
 
-	let displayedStudents = $derived<() => Student[]>(() =>
+	let displayedStudents = $derived.by(() =>
 		filterAndSort(students, showActiveOnly, searchQuery, sortBy)
 	);
 
@@ -81,7 +81,11 @@
 			</button>
 			<div class="sort-control">
 				<label for="order">Sort By:</label>
-				<select id="order" onchange={(e) => (sortBy = e.currentTarget.value as typeof sortBy)}>
+				<select
+					id="order"
+					aria-label="Sort students by"
+					onchange={(e) => (sortBy = e.currentTarget.value as typeof sortBy)}
+				>
 					<option value={SORT_OPTIONS.DEFAULT}>Default</option>
 					<option value={SORT_OPTIONS.NAME}>Name</option>
 					<option value={SORT_OPTIONS.AVERAGE_SCORE}>Average Score</option>
@@ -89,7 +93,7 @@
 			</div>
 		</div>
 		<section class="grid">
-			{#each displayedStudents() as student (student.id)}
+			{#each displayedStudents as student (student.id)}
 				<StudentCard {student} />
 			{:else}
 				<p class="empty">No students found</p>

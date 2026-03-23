@@ -28,12 +28,12 @@
 	/* typography */
 	--font-family-body: Verdana, Geneva, sans-serif;
 	--font-family-heading: Tahoma, Geneva, sans-serif;
-	--font-size-sm: 0.875rem;
+	--font-size-sm: 14px;
 	--font-size-base: 20px;
 	--font-size-lg: 24px;
 	--font-size-heading: 32px;
-	--font-weight-sm: 400;
-	--font-weight-md: 700;
+	--font-weight-400: 400;
+	--font-weight-700: 700;
 }
 
 *,

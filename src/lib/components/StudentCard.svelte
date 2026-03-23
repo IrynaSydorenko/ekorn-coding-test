@@ -58,7 +58,7 @@
 
 	.card-name {
 		font-size: var(--font-size-lg);
-		font-weight: var(--font-weight-md);
+		font-weight: var(--font-weight-700);
 		color: var(--color-text);
 	}
 
@@ -71,11 +71,11 @@
 
 	.card-label {
 		color: var(--color-text-muted);
-		font-weight: var(--font-weight-sm);
+		font-weight: var(--font-weight-400);
 	}
 
 	.card-value {
-		font-weight: var(--font-weight-md);
+		font-weight: var(--font-weight-700);
 		color: var(--color-text);
 		margin: 0;
 	}
